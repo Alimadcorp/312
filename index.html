@@ -43,7 +43,7 @@
           </button>
           <button onclick="runDecrypt()" id="decryptButton">Decrypt</button>
           <button onclick="copyOut()">Copy</button>
-          <label for="replaceMode">Unmatched character:</label>
+          <label for="replaceMode" id="rpm">Unmatched character:</label>
           <select id="replaceMode">
             <option value="unchanged">Use as is</option>
             <option value="?">Replace with ?</option>
@@ -277,6 +277,7 @@
 
       function runEncrypt() {
         dropdown.style.display = "inline";
+        rpm.style.display = "inline";
         document.getElementById("encryptButton").classList.add("high");
         document.getElementById("decryptButton").classList.remove("high");
         state.mode = "e";
@@ -286,6 +287,7 @@
       }
       function runDecrypt() {
         dropdown.style.display = "none";
+        rpm.style.display = "none";
         document.getElementById("decryptButton").classList.add("high");
         document.getElementById("encryptButton").classList.remove("high");
         state.mode = "d";
