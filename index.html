@@ -1,199 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3121534312</title>
-<meta name="description" content="3416512312131502441324434432616231312012454326612313121526">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>3121534312</title>
+    <meta
+      name="description"
+      content="3416512312131502441324434432616231312012454326612313121526"
+    />
 
-<meta property="og:url" content="https://312.alimad.co">
-<meta property="og:type" content="website">
-<meta property="og:title" content="3121534312">
-<meta property="og:description" content="3416512312131502441324434432616231312012454326612313121526">
-<meta property="og:image" content="">
+    <meta property="og:url" content="https://312.alimad.co" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="3121534312" />
+    <meta
+      property="og:description"
+      content="3416512312131502441324434432616231312012454326612313121526"
+    />
+    <meta property="og:image" content="" />
 
-<meta name="twitter:card" content="summary_large_image">
-<meta property="twitter:domain" content="312.alimad.co">
-<meta property="twitter:url" content="https://312.alimad.co">
-<meta name="twitter:title" content="3121534312">
-<meta name="twitter:description" content="3416512312131502441324434432616231312012454326612313121526">
-<meta name="twitter:image" content="">
-
-<style>
-:root {
-  --bg: #000;
-  --panel: rgba(0, 25, 0, 0.4);
-  --text: #00ff99;
-  --border: rgba(0,255,153,0.3);
-  --glow: #00ff99;
-}
-html, body {
-  margin: 0; padding: 0;
-  height: 100%;
-  font-family: monospace;
-  background: radial-gradient(circle at center, #000 0%, #001000 100%);
-  color: var(--text);
-  overflow: hidden;
-  font-size: 14px;
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(180deg, rgba(0,255,100,0.05) 0 1px, transparent 1px 2px);
-  opacity: 0.05;
-  pointer-events: none;
-}
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.container {
-  width: 95%;
-  max-width: 900px;
-  height: 90vh;
-  display: grid;
-  grid-template-rows: 1fr auto 1fr auto;
-  gap: 10px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 12px;
-  backdrop-filter: blur(12px) saturate(160%);
-  box-shadow: 0 0 20px rgba(0,255,150,0.15);
-  position: relative;
-  overflow: hidden;
-}
-.container::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(20px);
-  mask: linear-gradient(to bottom, transparent 10%, black 80%);
-  opacity: 0.2;
-  pointer-events: none;
-}
-textarea {
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px;
-  resize: none;
-  box-sizing: border-box;
-  outline: none;
-  text-shadow: 0 0 5px var(--glow);
-}
-button {
-  background: rgba(0,20,0,0.4);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
-  text-shadow: 0 0 4px var(--glow);
-}
-button:hover {
-  background: rgba(0,255,100,0.08);
-  box-shadow: 0 0 8px rgba(0,255,100,0.3);
-}
-.row {
-  display: flex;
-  gap: 8px;
-}
-@media (min-width: 700px) {
-  .container {
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: auto 40px;
-    height: 75vh;
-  }
-  #input, #output { height: 100%; }
-  #input { grid-column: 1; grid-row: 1 / span 2; }
-  #output { grid-column: 3; grid-row: 1 / span 2; }
-  .row { grid-column: 2; flex-direction: column; justify-content: center; }
-  button { width: auto; min-width: 90px; }
-}
-</style>
-</head>
-<body>
-<div class="container">
-  <textarea id="input" placeholder="Enter text..."></textarea>
-  <div class="row">
-    <button onclick="runEncrypt()">Encrypt</button>
-    <button onclick="runDecrypt()">Decrypt</button>
-    <button onclick="copyOut()">Copy</button>
-  </div>
-  <textarea id="output" placeholder="Result..." readonly></textarea>
-</div>
-<script>
- const cipher = {
-  111: "A", 112: "B", 113: "C", 121: "D", 122: "E", 123: "F",
-  131: "G", 132: "H", 133: "I", 211: "J", 212: "K", 213: "L",
-  221: "M", 222: "N", 223: "O", 231: "P", 232: "Q", 233: "R",
-  311: "S", 312: "T", 313: "U", 321: "V", 322: "W", 323: "X",
-  331: "Y", 332: "Z", 333: "*",
-  0: " ", 18: "0", 118: "1", 128: "2", 138: "3",
-  218: "4", 228: "5", 238: "6", 318: "7", 328: "8", 338: "9"
-};
-
-function decrypt(input) {
-  let clean = input.replace(/[^0-9 ]/g, "");
-  clean = clean.replace(/4/g, "11").replace(/5/g, "22").replace(/6/g, "33");
-  const parts = clean.split(" ");
-  const outputs = [];
-
-  for (let i = 0; i < parts.length; i++) {
-    const x = parts[i];
-    let token = "", out = "";
-    for (const ch of x) {
-      token += ch;
-      if (token.length === 3 || token === "0" || token === "18") {
-        out += cipher[token] ?? "?";
-        token = "";
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="twitter:domain" content="312.alimad.co" />
+    <meta property="twitter:url" content="https://312.alimad.co" />
+    <meta name="twitter:title" content="3121534312" />
+    <meta
+      name="twitter:description"
+      content="3416512312131502441324434432616231312012454326612313121526"
+    />
+    <meta name="twitter:image" content="" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="containerOuter">
+      <div class="container">
+        <textarea
+          id="input"
+          placeholder="Enter text..."
+          oninput="refresh()"
+        ></textarea>
+        <div class="row">
+          <button onclick="runEncrypt()" id="encryptButton" class="high">
+            Encrypt
+          </button>
+          <button onclick="runDecrypt()" id="decryptButton">Decrypt</button>
+          <button onclick="copyOut()">Copy</button>
+          <label for="replaceMode">Unmatched character:</label>
+          <select id="replaceMode">
+            <option value="unchanged">Use as is</option>
+            <option value="?">Replace with ?</option>
+            <option value="unicode">Convert to Unicode</option>
+          </select>
+          <label for="replaceMode2">Number Map:</label>
+          <select id="replaceMode2">
+            <option value="n">Use Latest</option>
+            <option value="o">Use Old</option>
+          </select>
+          <button onclick="lead()">Download the Font</button>
+          <button onclick="leadg()">View GitHub</button>
+          <p>
+            Made by
+            <a href="https://alimad.co" , target="_blank">Muhammad Ali</a>
+          </p>
+        </div>
+        <div id="output" placeholder="Result..."></div>
+      </div>
+      <div class="canvas-container">
+        <canvas id="pixelCanvas" width="512" height="16"></canvas>
+      </div>
+    </div>
+    <script src="cipher.js"></script>
+    <script>
+      function lead() {
+        window.open(
+          "https://cdn.alimad.co/f/static/TestRadioUnary.woff2",
+          "_blank"
+        );
       }
-    }
-    outputs.push(out);
-  }
+      function leadg() {
+        window.open("https://github.com/Alimadcorp/312", "_blank");
+      }
+      const canvas = document.getElementById("pixelCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      let lastArray = [];
+      let l = 0;
 
-  return outputs.length === 1 ? outputs[0] : outputs.map((o, i) => `${i + 1}. ${o}`).join("\n");
-}
+      function drawPixels(array) {
+        lal = array.length;
+        if (array.length > lastArray.length) {
+          for (let i = lastArray.length; i < array.length; i++) {
+            lastArray.push(array[i]);
+          }
+        }
+        for (let i = 0; i < array.length; i++) {
+          if (Math.random() > 0.7) {
+            lastArray[i] = array[i];
+          }
+        }
+        array = lastArray;
+        const rectWidth = 4;
+        const rectHeight = 4;
+        const color = "#fff";
+        const itemsPerRow = canvas.width / rectWidth;
+        const rowHeight = 16;
+        let gapHeight = 4;
+        let totalRows = Math.ceil(lal / itemsPerRow);
+        if (totalRows < 1) totalRows = 1;
+        if (totalRows == 1) gapHeight = 0;
+        const newHeight = totalRows * (rowHeight + gapHeight);
 
-const inverseCipher = Object.fromEntries(Object.entries(cipher).map(([k, v]) => [v, k]));
+        if (canvas.height !== newHeight) {
+          canvas.height = newHeight;
+        }
 
-function encrypt(text) {
-  let out = "";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let t = 0.2;
+        l = (1 - t) * l + t * lal;
 
-  for (const ch of text.toUpperCase()) {
-    const token = inverseCipher[ch];
-    if (!token) { out += "?"; continue; }
-    out += token.length === 1 ? token : token;
-  }
+        for (let i = 0; i < Math.ceil(l); i++) {
+          if (lal == 0 && Math.ceil(l) == 1) return;
+          let k = array[i];
+          const row = Math.floor(i / itemsPerRow);
+          const col = i % itemsPerRow;
+          const yOffset = row * (rowHeight + gapHeight);
 
-  out = out.replace(/11/g, "4").replace(/22/g, "5").replace(/33/g, "6");
-  return out;
-}
+          for (let j = 0; j < k.length; j++) {
+            if (k[j] === "1") {
+              ctx.fillStyle = color;
+              ctx.fillRect(
+                col * rectWidth,
+                yOffset + j * rectHeight,
+                rectWidth,
+                rectHeight
+              );
+            }
+          }
+        }
+      }
+      window.addEventListener("resize", () => {
+        canvas.style.width = "100%";
+      });
+      let state = {
+        input: "",
+        output: "",
+        mode: "e",
+        unmatched: "unchanged", // or "?" or "unicode"
+        numbers: "n",
+      };
+      const dropdown = document.getElementById("replaceMode");
+      const dropdown2 = document.getElementById("replaceMode2");
+      document.addEventListener("DOMContentLoaded", () => {
+        let saved = localStorage.getItem("312state");
+        if (saved) {
+          state = JSON.parse(saved);
+          if (state.mode == "d") {
+            document.getElementById("encryptButton").classList.remove("high");
+            document.getElementById("decryptButton").classList.add("high");
+          }
+          document.getElementById("input").value = state.input;
+        } else {
+          localStorage.setItem("312state", JSON.stringify(state));
+        }
+        setInterval(() => {
+          state.input = document.getElementById("input").value;
+          let code = "";
+          if (state.mode == "d") {
+            code = state.input;
+          } else {
+            code = state.output;
+          }
+          let cs = code.replace(/\D/g, "").split("");
+          let array = [];
+          for (let i = 0; i < cs.length; i++) {
+            array.push(numberCipher[cs[i]]);
+          }
+          drawPixels(array);
+          localStorage.setItem("312state", JSON.stringify(state));
+        }, 50);
+        dropdown.value = state.unmatched ?? "unchanged";
+        dropdown2.value = state.numbers ?? "n";
+        updateMaps();
+        refresh();
+      });
+      dropdown.addEventListener("change", () => {
+        state.unmatched = dropdown.value;
+        refresh();
+      });
+      dropdown2.addEventListener("change", () => {
+        state.numbers = dropdown2.value;
+        updateMaps();
+        refresh();
+      });
+      let inverseCipher = Object.fromEntries(
+        Object.entries(cipher).map(([k, v]) => [v, k])
+      );
+      function updateMaps() {
+        if (state.numbers == "n") {
+          cipher = { ...c, ...newCipher };
+        } else {
+          cipher = { ...c, ...oldCipher };
+        }
+        inverseCipher = Object.fromEntries(
+          Object.entries(cipher).map(([k, v]) => [v, k])
+        );
+      }
+      function decrypt(input) {
+        let clean = input;
 
-function runEncrypt(){
-  const t=document.getElementById('input').value.trim()
-  const res=encrypt(t)
-  document.getElementById('output').value=res
-}
-function runDecrypt(){
-  const t=document.getElementById('input').value.trim()
-  const res=decrypt(t)
-  document.getElementById('output').value=res
-}
-function copyOut(){
-  const out=document.getElementById('output')
-  out.select()
-  document.execCommand('copy')
-}
-</script>
-</body>
+        clean = clean
+          .replace(/4/g, "11")
+          .replace(/5/g, "22")
+          .replace(/6/g, "33");
+
+        const parts = clean.split(" ");
+        const outputs = [];
+
+        for (let i = 0; i < parts.length; i++) {
+          const x = parts[i];
+          let token = "",
+            out = "";
+          for (const ch of x) {
+            token += ch;
+            if (token == "791") {
+              out += token;
+              token = "";
+              out = out.replace(/791(.+)791/g, (_, hex) => {
+                console.log(hex);
+                try {
+                  return String.fromCodePoint(parseInt(hex, 16));
+                } catch {
+                  return `<span class='red'>${hex}</span>`;
+                }
+              });
+              continue;
+            }
+            if (token.length === 3 || token === "0") {
+              out += cipher[token] ?? `<span class='red'>${token}</span>`;
+              token = "";
+            } else if (!/[0-9]/.test(token)) {
+              out += `<span class='red'>${token}</span>`;
+              token = "";
+            }
+          }
+          if (token.length > 0) {
+            out += `<span class='red'>${token}</span>`;
+            token = "";
+          }
+          outputs.push(out);
+        }
+
+        return outputs.join(" ");
+      }
+
+      function encrypt(text) {
+        let out = "";
+
+        for (const ch of text.toUpperCase()) {
+          const token = inverseCipher[ch];
+          if (!token) {
+            if (state.unmatched == "unchanged") {
+              out += `<span class='red'>${ch}</span>`;
+            } else if (state.unmatched == "?") {
+              out += "<span class='red'>?</span>";
+            } else if (state.unmatched == "unicode") {
+              out += `<span class='blue'>791${encrypt(
+                charToUnicode(ch)
+              )}791</span>`;
+            }
+            continue;
+          }
+          out += token.length === 1 ? token : token;
+        }
+
+        out = out.replace(/11/g, "4").replace(/22/g, "5").replace(/33/g, "6");
+        return out;
+      }
+
+      function runEncrypt() {
+        dropdown.style.display = "inline";
+        document.getElementById("encryptButton").classList.add("high");
+        document.getElementById("decryptButton").classList.remove("high");
+        state.mode = "e";
+        const t = document.getElementById("input").value;
+        const res = encrypt(t);
+        state.output = res;
+      }
+      function runDecrypt() {
+        dropdown.style.display = "none";
+        document.getElementById("decryptButton").classList.add("high");
+        document.getElementById("encryptButton").classList.remove("high");
+        state.mode = "d";
+        const t = document.getElementById("input").value;
+        const res = decrypt(t);
+        state.output = res;
+      }
+      function update() {
+        const desired = state.output || "";
+        if (!_animating && desired !== _lastTarget) {
+          _animateWindowTo(desired);
+        }
+      }
+
+      setInterval(update, 10);
+
+      function charToUnicode(char) {
+        if (!char || char.length === 0) return null;
+        const codePoint = char.codePointAt(0);
+        return codePoint.toString(16).toUpperCase();
+      }
+
+      function unicodeToChar(unicodeHex) {
+        const hex = unicodeHex.replace(/^U\+/i, "");
+        const codePoint = parseInt(hex, 16);
+        return String.fromCodePoint(codePoint);
+      }
+
+      let _lastTarget = null;
+      let _animating = false;
+      const _animDuration = 100;
+      const _windowSize = 3;
+      function _stripHTML(html) {
+        const tmp = document.createElement("div");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+      }
+
+      function _applyFinalHTML(targetHTML) {
+        const el = document.getElementById("output");
+        el.innerHTML = (targetHTML || "").replace(/\n/g, "<br>");
+      }
+
+      function _getOutputCenterIndex(targetText) {
+        const inputEl = document.getElementById("input");
+        if (!inputEl) return targetText.length;
+        const sel =
+          inputEl.selectionStart != null
+            ? inputEl.selectionStart
+            : inputEl.value.length;
+
+        if (sel >= inputEl.value.length) return targetText.length;
+
+        if (state.mode === "e") {
+          return Math.min(targetText.length, Math.floor(sel * 3));
+        } else if (state.mode === "d") {
+          return Math.min(targetText.length, Math.floor(sel / 3));
+        }
+        return targetText.length;
+      }
+
+      function _animateWindowTo(targetHTML) {
+        const el = document.getElementById("output");
+        const startText = _stripHTML(el.innerHTML);
+        const targetText = _stripHTML(targetHTML);
+        const maxLen = Math.max(startText.length, targetText.length);
+        const center = _getOutputCenterIndex(targetText);
+        const windowRadius = Math.max(5, Math.floor(_windowSize / 2));
+        const windowStart = Math.max(0, center - windowRadius);
+        const windowEnd = Math.min(maxLen, center + windowRadius);
+
+        const start = Date.now();
+        _animating = true;
+
+        function tick() {
+          const elapsed = Date.now() - start;
+          const t = Math.min(1, elapsed / _animDuration);
+          const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+          let display = "";
+          const glyphs = "0123456789";
+
+          for (let i = 0; i < maxLen; i++) {
+            const toChar = targetText[i] || " ";
+
+            if (i < windowStart || i > windowEnd) {
+              display += toChar;
+              continue;
+            }
+            const dist = Math.abs(i - center) / Math.max(1, windowRadius);
+            const localProgress = Math.max(0, ease - dist * 0.35);
+            const lockProb = Math.pow(Math.max(0, localProgress), 0.8);
+
+            if (Math.random() < lockProb) {
+              display += toChar;
+            } else {
+              display += glyphs.charAt(
+                Math.floor(Math.random() * glyphs.length)
+              );
+            }
+          }
+
+          el.textContent = display;
+
+          if (t < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            _applyFinalHTML(targetHTML);
+            _animating = false;
+            _lastTarget = targetHTML;
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function copyOut() {
+        const outEl = document.getElementById("output");
+        const text = outEl.textContent || "";
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+          });
+        } else {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+      }
+      function refresh() {
+        if (state.mode == "e") {
+          runEncrypt();
+        } else if (state.mode == "d") {
+          runDecrypt();
+        } else {
+          alert("Something silly is going on :>");
+          runEncrypt();
+        }
+      }
+    </script>
+  </body>
 </html>
