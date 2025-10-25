@@ -90,6 +90,7 @@
       canvas {
         width: 100%;
         image-rendering: pixelated;
+        cursor: pointer;
         image-rendering: crisp-edges;
         background: transparent;
         display: block;
@@ -109,8 +110,8 @@
       .containerOuter {
         width: 95%;
         max-width: 900px;
-        min-height: 90vh;
-        max-height: 100vh;
+        min-height: 80vh;
+        max-height: 90vh;
         display: grid;
         grid-template-rows: 1fr auto;
         gap: 10px;
@@ -198,8 +199,51 @@
       }
 
       .row {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
+        width: 100%;
+        align-items: center;
+        justify-items: center;
+      }
+      .row label,
+      .row select,
+      .row button,
+      .row p {
+        width: 100%;
+        text-align: center;
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(0, 40, 0, 0.2);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--glow);
+        border-radius: 4px;
+        box-shadow: 0 0 8px var(--glow);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #dafff3;
+        cursor: n-resize;
+      }
+      @media (min-width: 700px) {
+        .row {
+          display: flex;
+          flex-direction: column;
+          align-content: center;
+          align-self: center;
+          align-items: center;
+          transform: translateY(40px);
+          gap: 10px;
+        }
+
+        button {
+          width: auto;
+          min-width: 90px;
+        }
       }
 
       .number {
@@ -245,17 +289,6 @@
           grid-column: 3;
           grid-row: 1 / span 2;
         }
-
-        .row {
-          grid-column: 2;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        button {
-          width: auto;
-          min-width: 90px;
-        }
       }
     </style>
   </head>
@@ -272,7 +305,6 @@
             Encrypt
           </button>
           <button onclick="runDecrypt()" id="decryptButton">Decrypt</button>
-          <button onclick="copyOut()">Copy</button>
           <label for="replaceMode" id="rpm">Unmatched character:</label>
           <select id="replaceMode">
             <option value="unchanged">Use as is</option>
@@ -286,9 +318,10 @@
           </select>
           <button onclick="lead()">Download the Font</button>
           <button onclick="leadg()">View GitHub</button>
+          <button onclick="copyOut()">Copy</button>
           <p>
-            Made by
-            <a href="https://alimad.co" , target="_blank">Muhammad Ali</a>
+            View
+            <a href="https://docs.google.com/presentation/d/110bIi0N-z-D4FKMVwkCpnr1YUTwLF7zX79gop2ZVmQo/present" , target="_blank">Analysis Slides</a>
           </p>
         </div>
         <div id="output" placeholder="Result..."></div>
@@ -309,13 +342,48 @@
         window.open("https://github.com/Alimadcorp/312", "_blank");
       }
       const canvas = document.getElementById("pixelCanvas");
+      canvas.addEventListener("click", () => {
+        drawPixels(storeArray, "#fff");
+        const dataURL = canvas.toDataURL("image/png");
+        const newWindow = window.open("", "_blank");
+        if (newWindow) {
+          newWindow.document.write(`
+            <style>
+              html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+              }
+              img {
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+                width: 90%;
+                max-height: 100%;
+                display: block;
+              }
+            </style>
+            <img src="${dataURL}" alt="Canvas Snapshot">
+        `);
+          newWindow.document.close();
+        } else {
+          alert("Popup blocked! Please allow popups for this site.");
+        }
+      });
       const ctx = canvas.getContext("2d");
       ctx.imageSmoothingEnabled = false;
       let lastArray = [];
       let l = 0;
+      let storeArray = [];
 
-      function drawPixels(array) {
+      function drawPixels(array, color = "#0f9") {
         lal = array.length;
+        storeArray = array;
         if (array.length > lastArray.length) {
           for (let i = lastArray.length; i < array.length; i++) {
             lastArray.push(array[i]);
@@ -329,7 +397,6 @@
         array = lastArray;
         const rectWidth = 4;
         const rectHeight = 4;
-        const color = "#0f9";
         const itemsPerRow = canvas.width / rectWidth;
         const rowHeight = 16;
         let gapHeight = 4;
@@ -345,10 +412,13 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let t = 0.2;
         l = (1 - t) * l + t * lal;
+        let f = Math.ceil(l);
+        if (Math.abs(f - storeArray.length) == 1) f = storeArray.length;
 
-        for (let i = 0; i < Math.ceil(l); i++) {
-          if (lal == 0 && Math.ceil(l) == 1) return;
+        for (let i = 0; i < f; i++) {
+          if (lal == 0 && f == 1) return;
           let k = array[i];
+          let x = storeArray[i] || ["0", "0", "0", "0"];
           const row = Math.floor(i / itemsPerRow);
           const col = i % itemsPerRow;
           const yOffset = row * (rowHeight + gapHeight);
@@ -356,6 +426,8 @@
           for (let j = 0; j < k.length; j++) {
             if (k[j] === "1") {
               ctx.fillStyle = color;
+              if (k[j] != x[j] && j < k.length - 2) ctx.fillStyle = "#df0";
+              if (i >= storeArray.length) ctx.fillStyle = "#f00";
               ctx.fillRect(
                 col * rectWidth,
                 yOffset + j * rectHeight,
