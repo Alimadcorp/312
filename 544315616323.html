@@ -17,58 +17,92 @@
     />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      canvas {
-        display: block;
-      }
-      body {
-        margin: 0;
-        background: #000;
-        font-family: Consolas, monospace;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
+            html,
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            canvas {
+              display: block;
+              width: 100%;
+              height: auto;
+            }
+            body {
+              margin: 0;
+              background: #000;
+              font-family: Consolas, monospace;
+              overflow: hidden;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            }
 
-      #ui {
+            #ui {
         position: fixed;
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         width: calc(100% - 40px);
         max-width: 1000px;
-        padding: 10px;
-        background: rgba(0, 40, 0, 0.8);
+        padding: 8px 10px;
+        background: rgba(0, 40, 0, 0.9);
         color: #00ff90;
         font-size: 14px;
-        white-space: pre-wrap;
-        word-break: break-all;
         border-top: 2px solid #00ff90;
         text-shadow: 0 0 8px #00ff90;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
       }
 
-      input[type="file"],
-      input[type="range"],
-      button {
-        margin: 4px 6px;
+      .info {
+        flex: 1 1 auto;
+        min-width: 250px;
       }
 
-      button {
-        background: black;
-        border: 1px solid #00ff90;
-        color: #00ff90;
-        padding: 4px 8px;
-        cursor: pointer;
+            input[type="file"],
+            input[type="range"],
+            button {
+              margin: 4px 6px;
+            }
+
+            button {
+              background: black;
+              border: 1px solid #00ff90;
+              color: #00ff90;
+              padding: 4px 8px;
+              cursor: pointer;
+            }
+            button:hover {
+              background: #003300;
+            }
+            .help-wrap { position:relative; display:inline-block; margin-left:6px; }
+      .help-btn {
+        border:1px solid #00ff90;
+        padding:2px 6px;
+        cursor:pointer;
+        color:#00ff90;
+        background:#000;
       }
-      button:hover {
-        background: #003300;
+      .help-tip {
+        position:absolute;
+        left:50%; transform:translateX(-50%);
+        bottom:calc(100% + 10px);
+        background:#001a00;
+        color:#00ff90;
+        padding:6px 10px;
+        border:1px solid #00ff90;
+        border-radius:4px;
+        font-size:12px;
+        white-space:nowrap;
+        pointer-events:none;
+        opacity:0;
+        transition:opacity .1s ease;
+        text-shadow:0 0 6px #00ff90;
       }
+      .help-wrap:hover .help-tip { opacity:1; }
     </style>
     <meta charset="utf-8" />
   </head>
@@ -76,6 +110,8 @@
     <main></main>
     <script>
       let img;
+      let targetColor = [255,255,255];
+      let colorPicker, colorPreview;
       let cols = 90,
         rows = 4;
       let cellx = 7,
@@ -106,7 +142,20 @@
         slider = createSlider(0, 100, threshold);
         slider.parent(uiDiv);
         slider.input(() => (threshold = slider.value()));
-
+        colorPicker = createColorPicker('#ffffff');
+        colorPicker.parent(uiDiv);
+        colorPicker.input(()=>{
+          const c = colorPicker.color();
+          targetColor = [c.levels[0], c.levels[1], c.levels[2]];
+          colorPreview.style('background', colorPicker.value());
+        });
+        colorPreview = createDiv('');
+        colorPreview.parent(uiDiv);
+        colorPreview.style('width','20px');
+        colorPreview.style('height','20px');
+        colorPreview.style('display','inline-block');
+        colorPreview.style('margin-left','5px');
+        colorPreview.style('border','1px solid #333');
         copyBtn = createButton("Copy");
         copyBtn.parent(uiDiv);
         copyBtn.mousePressed(() => navigator.clipboard.writeText(o));
@@ -150,7 +199,7 @@
         cellvx *= 1.01;
         cellvy *= 1.01;
         skewv *= 1.01;
-        if (frameCount % 3 == 0) {
+        if (frameCount % 3 == 0 && keyIsPressed) {
           if (key == "]") cols++;
           if (key == "[") cols--;
         }
@@ -196,11 +245,11 @@
           `ox:${ox.toFixed(1)} oy:${oy.toFixed(1)} ` +
             `cellx:${cellx.toFixed(2)} celly:${celly.toFixed(2)} ` +
             `skew:${skew.toFixed(2)} cols:${cols} rows:${rows} ` +
-            `threshold:${threshold}\n${o}\n${decrypt(o)}\n`
+            `threshold:${threshold}\n${o}\n${decrypt(o)}\n\n`
         );
-        uiDiv.child(fileInput);
         uiDiv.child(slider);
         uiDiv.child(copyBtn);
+        uiDiv.child(colorPicker);
       }
 
       function keyPressed() {
@@ -414,5 +463,12 @@
       }
     </script>
     <div id="ui"></div>
+    <div class="help-wrap">
+      <div class="help-btn">Help</div>
+      <div class="help-tip">
+        WASD/Arrow keys to move<br />QE/ZC to scale<br />,. to skew<br />[] to
+        change count
+      </div>
+    </div>
   </body>
 </html>
