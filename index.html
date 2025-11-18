@@ -316,7 +316,8 @@
           <button onclick="lead()">Download the Font</button>
           <button onclick="leadg()">View GitHub</button>
           <button onclick="copyOut()">Copy</button>
-          <p>
+          <div style="display: grid; grid-auto-columns: 1; gap: 10px;">
+          <p style="margin:0">
             View
             <a
               href="https://docs.google.com/presentation/d/110bIi0N-z-D4FKMVwkCpnr1YUTwLF7zX79gop2ZVmQo/present"
@@ -325,6 +326,24 @@
               >Analysis Slides</a
             >
           </p>
+          <p style="margin:0">
+            Decrypt
+            <a
+              href="./544315616323"
+              ,
+              target="_blank"
+              >Matrix Codes</a
+            >
+          </p>
+          <p style="margin:0">
+            Made by
+            <a
+              href="https://alimad.co"
+              ,
+              target="_blank"
+              >Muhammad Ali</a
+            >
+          </p></div>
         </div>
         <div id="output" placeholder="Result..."></div>
       </div>
@@ -516,7 +535,6 @@
             code = state.output;
           }
           let cs = code.replace(/\D/g, "").split("");
-          console.log(cs.length)
           if(cs.length > 512) cs = "3152353021353521310315230155243531245".split("");
           let array = [];
           for (let i = 0; i < cs.length; i++) {
