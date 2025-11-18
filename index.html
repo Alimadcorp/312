@@ -572,6 +572,7 @@
       }
       function decrypt(input) {
         let clean = input;
+        let capnext = false;
 
         clean = clean
           .replace(/4/g, "11")
@@ -599,9 +600,12 @@
                 }
               });
               continue;
-            }
+            } else if (token == "717") { capnext = true; token = ""; continue; }
             if (token.length === 3 || token === "0") {
-              out += cipher[token] ?? `<span class='red'>${token}</span>`;
+              let inc = cipher[token] ?? `<span class='red'>${token}</span>`;
+              if(!capnext) inc = inc.toLowerCase();
+              else capnext = false;
+              out += inc;
               token = "";
             } else if (!/[0-9]/.test(token)) {
               out += `<span class='red'>${token}</span>`;
