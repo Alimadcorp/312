@@ -325,24 +325,6 @@
               >Analysis Slides</a
             >
           </p>
-          <p>
-            Decrypt
-            <a
-              href="./544315616323"
-              ,
-              target="_blank"
-              >Matrix Codes</a
-            >
-          </p>
-          <p>
-            Made by
-            <a
-              href="https://alimad.co"
-              ,
-              target="_blank"
-              >Muhammad Ali</a
-            >
-          </p>
         </div>
         <div id="output" placeholder="Result..."></div>
       </div>
@@ -534,6 +516,8 @@
             code = state.output;
           }
           let cs = code.replace(/\D/g, "").split("");
+          console.log(cs.length)
+          if(cs.length > 512) cs = "3152353021353521310315230155243531245".split("");
           let array = [];
           for (let i = 0; i < cs.length; i++) {
             array.push(numberCipher[cs[i]]);
@@ -802,4 +786,4 @@
       }
     </script>
   </body>
-  </html>
+</html>
