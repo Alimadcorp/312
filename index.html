@@ -794,8 +794,18 @@
         }
 
         if (insideUnicode) {
-          if (token.length === 1) {
-            unicodeContent += token;
+          if (token.length === 3 || token === "0" || (!isN && token === "18")) {
+            let inc = cipher[token];
+            if (inc) {
+              unicodeContent += inc;
+            } else {
+              out += `<span class='red'>${token}</span>`;
+              hasError = true;
+            }
+            token = "";
+          } else if (token.length > 3) {
+            out += `<span class='red'>${token}</span>`;
+            hasError = true;
             token = "";
           }
           continue;
@@ -898,7 +908,7 @@
           token = "";
           continue;
         }
-        if (token.length === 3 || token === "0") {
+        if (token.length === 3 || token === "0" || (!isN && token === "18")) {
           let inc = cipher[token];
 
           if (inc) {
@@ -940,7 +950,7 @@
       return { output: out, hasError: hasError };
     }
 
-    function encrypt(text) {
+    function encrypt(text, forceCaseInsensitive = false) {
       let out = "";
       let bracketOpen = false;
 
@@ -1044,7 +1054,8 @@
               out += "<span class='red'>?</span>";
             } else if (state.unmatched == "unicode") {
               out += `<span class='blue'>791${encrypt(
-                charToUnicode(ch)
+                charToUnicode(ch),
+                true
               )}791</span>`;
             }
           }
@@ -1061,7 +1072,8 @@
             out += "<span class='red'>?</span>";
           } else if (state.unmatched == "unicode") {
             out += `<span class='blue'>791${encrypt(
-              charToUnicode(ch)
+              charToUnicode(ch),
+              true
             )}791</span>`;
           }
           continue;
@@ -1071,7 +1083,7 @@
         const isCapital = (ch === up && isLetterChar);
 
         // Only handle capitalization if case sensitive mode is enabled
-        if (isCapital && state.caseSensitive) {
+        if (isCapital && state.caseSensitive && !forceCaseInsensitive) {
           const pattern = detectCapPattern(i);
 
           if (pattern.type === "sentence") {
