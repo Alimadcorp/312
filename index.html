@@ -735,11 +735,36 @@
         .replace(/5/g, "22")
         .replace(/6/g, "33");
 
+      // Global Unicode extraction (Prioritized Pass)
+      const isN = state.numbers != "o";
+      const currentCipher = isN ? { ...c, ...newCipher } : { ...c, ...oldCipher };
+      clean = clean.replace(/791(.*?)791/g, (match, content) => {
+        let hex = "";
+        let t = "";
+        for (let i = 0; i < content.length; i++) {
+          t += content[i];
+          if (t.length === 3 || t === "0" || (!isN && t === "18")) {
+            let char = currentCipher[t];
+            if (char) hex += char;
+            t = "";
+          } else if (t.length > 3) {
+            t = "";
+          }
+        }
+        if (!hex) return "";
+        try {
+          return `<span class='blue'>${String.fromCodePoint(parseInt(hex, 16))}</span>`;
+        } catch (e) {
+          return `<span class='red'>${hex}</span>`;
+        }
+      });
+
       const parts = clean.split(" ");
       const outputs = [];
 
       for (let i = 0; i < parts.length; i++) {
         const x = parts[i];
+        if (!x) continue;
         let result = decryptWord(x, state.capitalization === "cipher");
 
         if (result.hasError) {
@@ -762,59 +787,31 @@
       let capWord = false;
       let capSentence = false;
       let bracketOpen = false;
-      let insideUnicode = false;
-      let unicodeContent = "";
 
       let token = "";
 
       for (let j = 0; j < x.length; j++) {
-        token += x[j];
+        const char = x[j];
+
+        // Pass through HTML and pre-decoded Unicode characters
+        if (!/[0-9]/.test(char)) {
+          out += char;
+          if ([".", ",", "!", "?", " ", "\n", "\r"].includes(char)) {
+            capSentence = false;
+            capWord = false;
+          }
+          if (char === " ") capWord = false;
+          continue;
+        }
+
+        token += char;
 
         const nextChar = x[j + 1];
         const next2Char = x[j + 2];
-        if (token === "791") {
-          if (insideUnicode) {
-            try {
-              out += String.fromCodePoint(parseInt(unicodeContent, 16));
-            } catch {
-              out += `<span class='red'>${unicodeContent}</span>`;
-              hasError = true;
-            }
-            insideUnicode = false;
-            unicodeContent = "";
-          } else {
-            insideUnicode = true;
-          }
-          token = "";
-          continue;
-        } else if (token === "7" && nextChar === "9") {
-          continue;
-        } else if (token === "79" && nextChar === "1") {
-          continue;
-        }
 
-        if (insideUnicode) {
-          if (token.length === 3 || token === "0" || (!isN && token === "18")) {
-            let inc = cipher[token];
-            if (inc) {
-              unicodeContent += inc;
-            } else {
-              out += `<span class='red'>${token}</span>`;
-              hasError = true;
-            }
-            token = "";
-          } else if (token.length > 3) {
-            out += `<span class='red'>${token}</span>`;
-            hasError = true;
-            token = "";
-          }
-          continue;
-        }
-
-        let isSpecial = false;
         let codeType = 0;
-
         const isN = state.numbers != "o";
+
         if (cipherFirst) {
           if (token === "711" || token === "712" || token === "713" || token === "171") {
             let inc = cipher[token];
@@ -828,7 +825,8 @@
           if (token === "7" && nextChar === "1" && ["1", "2", "3"].includes(next2Char)) continue;
           if (token === "17" && nextChar === "1") continue;
           if (token === "1" && nextChar === "7" && next2Char === "1") continue;
-          const isAtWordStart = (j === 0) || (out.length === 0) ||
+
+          const isAtWordStart = (j - token.length + 1 === 0) || (out.length === 0) ||
             [" ", "\n", ".", "!", "?", ",", ";", ":", "("].includes(out[out.length - 1]);
 
           if (isAtWordStart) {
@@ -843,7 +841,7 @@
             }
           }
         } else {
-          const isAtWordStart = (j === 0) || (out.length === 0) ||
+          const isAtWordStart = (j - token.length + 1 === 0) || (out.length === 0) ||
             [" ", "\n", ".", "!", "?", ",", ";", ":", "("].includes(out[out.length - 1]);
 
           if (isAtWordStart) {
@@ -867,7 +865,6 @@
                 continue;
               }
             }
-
             if (token === "71" && ["1", "2", "3"].includes(nextChar)) continue;
             if (token === "7" && nextChar === "1" && ["1", "2", "3"].includes(next2Char)) continue;
             if (token === "17" && nextChar === "1") continue;
@@ -908,9 +905,9 @@
           token = "";
           continue;
         }
+
         if (token.length === 3 || token === "0" || (!isN && token === "18")) {
           let inc = cipher[token];
-
           if (inc) {
             if ([".", ",", "!", "?", "\n", "\r"].includes(inc)) {
               capSentence = false;
@@ -920,11 +917,7 @@
 
             let finalChar = inc;
             let doCap = capNext || capWord || capSentence;
-
-            if (!doCap) {
-              finalChar = finalChar.toLowerCase();
-            }
-
+            if (!doCap) finalChar = finalChar.toLowerCase();
             out += finalChar;
             capNext = false;
           } else {
@@ -933,10 +926,6 @@
           }
           token = "";
         } else if (token.length > 3) {
-          out += `<span class='red'>${token}</span>`;
-          hasError = true;
-          token = "";
-        } else if (!/[0-9]/.test(token)) {
           out += `<span class='red'>${token}</span>`;
           hasError = true;
           token = "";
