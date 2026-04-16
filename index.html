@@ -693,8 +693,7 @@
           dotElement.classList.add("offline");
         });
     }
-
-    setInterval(updateLiveCount, 15000);
+    updateLiveCount();
     dropdown.addEventListener("change", () => {
       state.unmatched = dropdown.value;
       refresh();
